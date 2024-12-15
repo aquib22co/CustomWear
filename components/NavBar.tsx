@@ -1,12 +1,38 @@
 import React from 'react'
 import { Button } from './ui/button'
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 
 const NavBar = () => {
+
+
     return (
-        <div className='h-[70px] bg-black'>
-            <div className='absolute right-0'>
-                <Button className='mx-2 my-4 bg-white rounded-3xl hover:bg-slate-400'>Sign In</Button>
-                <Button className='mx-2 my-4 bg-blue-500 rounded-3xl hover:bg-blue-700'>Sign Up</Button>
+        <div className='bg-black'>
+            <div className='flex flex-col items-end justify-center'>
+                <div>
+                    <SignedOut>
+                        <SignInButton mode='modal'><Button variant="default" className='bg-white rounded-full my-4 mx-2 font-bold text-gray-800'>Sign In</Button></SignInButton>
+                        <SignUpButton mode='modal'><Button variant="default" className='bg-blue-500 rounded-full my-4 mr-2 font-bold'>Sign Up</Button></SignUpButton>
+                    </SignedOut>
+                    <SignedIn>
+                        <div className='my-2 mx-2'>
+                            <UserButton
+                                appearance={{
+                                    elements: {
+                                        rootBox: {
+                                            fontSize: '16px',
+                                            borderRadius: '8px',
+                                        },
+                                        userButtonAvatarBox: {
+                                            width: '36px',
+                                            height: '36px',
+                                        },
+                                    },
+                                }}
+                            />
+                        </div>
+
+                    </SignedIn>
+                </div>
             </div>
         </div >
     )
