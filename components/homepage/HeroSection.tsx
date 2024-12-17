@@ -2,6 +2,7 @@ import { Raleway } from "next/font/google";
 import { cn } from "@/lib/utils";
 import AnimatedGridPattern from "../ui/animated-grid-pattern";
 import { Button } from "../ui/button";
+import Link from "next/link";
 
 const raleWay = Raleway({
     subsets: ["latin"],
@@ -44,7 +45,11 @@ const HeroSection = () => {
                 <p className={`${raleWay.className} font-thin text-3xl text-white`}>
                     Design Your Style, Wear Your Vision.
                 </p>
-                <Button className="text-white rounded font-bold px-12 mt-8 py-4 bg-gradient-to-r from-gray-700 to-slate-400 hover:from-gray-800 hover:to-slate-500 transition-all duration-300 ease-in-out border-[1px]">Explore</Button>
+                <div className="block mt-12">
+
+                    <Link href="/explore" className="text-white rounded-full font-bold px-12 py-4 bg-[linear-gradient(to_right,#111827,#334155)] hover:bg-[linear-gradient(to_right,#0f172a,#1e293b)] transition-all duration-300 ease-in-out border-[0.1px] border-gray-500">Explore</Link>
+
+                </div>
             </div>
         </div>
     );
