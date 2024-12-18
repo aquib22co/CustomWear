@@ -4,6 +4,9 @@ import React from 'react'
 import connectDB from '@/lib/db'
 import HeroSection from '@/components/homepage/HeroSection';
 import NextSection from '@/components/homepage/NextSection';
+import CanvasSection from '@/components/homepage/CanvasSection';
+import ShinyBorderSection from '@/components/homepage/ShinyBorderSection';
+import Footer from '@/components/homepage/Footer';
 
 const page = () => {
   try {
@@ -16,6 +19,9 @@ const page = () => {
       <NavBar />
       <HeroSection />
       <NextSection />
+      <CanvasSection />
+      <ShinyBorderSection />
+      <Footer />
     </div>
   )
 }
