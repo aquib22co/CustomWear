@@ -1,7 +1,12 @@
+"use client";
+import DesignGallery from '@/components/DesignGallery'
 
 const Explore = () => {
     return (
-        <div>Explore</div>
+        <>
+         <DesignGallery/>
+        </>
+
     )
 }
 
