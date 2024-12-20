@@ -4,7 +4,7 @@ interface IDrawing extends Document {
     drawing_name :string;
     createdBy : Schema.Types.ObjectId
     drawing_on : string;
-    drawing_data : string;
+    drawing_pic : string;
     createdAt : Date;
 }
 
@@ -21,9 +21,9 @@ const drawingSchema = new Schema<IDrawing>({
     },
     drawing_on :{
         type : String,
-        requried : true
+        requried : false
     },
-    drawing_data : {
+    drawing_pic : {
         type : String,
         required : true
     },
@@ -35,4 +35,4 @@ const drawingSchema = new Schema<IDrawing>({
     
 },{timestamps : true});
 
-export const Drawing = mongoose.model<IDrawing>("Drawing",drawingSchema);
+export const Drawing = mongoose.models.Drawing || mongoose.model<IDrawing>("Drawing",drawingSchema);
