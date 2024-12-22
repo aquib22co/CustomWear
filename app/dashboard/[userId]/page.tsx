@@ -17,7 +17,7 @@ const Dashboard = () => {
 
     return (
         <div>
-            <Navbar />
+            <Navbar title="Zain" />
             <div className="text-center mt-20">
                 <h1 className="text-4xl text-white font-bold">Welcome, {user.firstName}</h1>
                 <p className="mt-4 text-gray-500">This is your personal dashboard!</p>
