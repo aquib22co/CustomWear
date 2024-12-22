@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
+import Navbar from '@/components/dashboard/Navbar';
 
 const Dashboard = () => {
     const { userId } = useParams(); // Get dynamic userId from URL
@@ -15,10 +16,14 @@ const Dashboard = () => {
     }
 
     return (
-        <div className="text-center mt-20">
-            <h1 className="text-4xl font-bold">Welcome, {user.firstName}</h1>
-            <p className="mt-4 text-gray-500">This is your personal dashboard!</p>
+        <div>
+            <Navbar />
+            <div className="text-center mt-20">
+                <h1 className="text-4xl text-white font-bold">Welcome, {user.firstName}</h1>
+                <p className="mt-4 text-gray-500">This is your personal dashboard!</p>
+            </div>
         </div>
+
     );
 };
 

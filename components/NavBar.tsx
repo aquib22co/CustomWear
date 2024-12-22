@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 import { Raleway } from 'next/font/google';
 import Link from 'next/link';
 import { FiMenu, FiX } from 'react-icons/fi';
+import { useAuth } from '@clerk/nextjs';
 import DashboardButton from './homepage/DashboardButton';
 
 const raleWay = Raleway({
@@ -15,6 +16,34 @@ const raleWay = Raleway({
 
 const NavBar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
+    const { userId, sessionId, isLoaded } = useAuth();
+    console.log(`User ID: ${userId}, Session ID: ${sessionId}, isLoaded: ${isLoaded}`);
+
+    useEffect(() => {
+        const fetchAuth = async () => {
+            try {
+                if (sessionId) {
+                    const response = await fetch('/api/auth', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ sessionId: sessionId })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    console.log(data); // Handle the data as required
+                }
+            } catch (error) {
+                console.log('Error during authentication request:', error);
+            }
+        };
+
+        fetchAuth();
+    }, [sessionId]);
+
 
     return (
         <div className="fixed top-0 left-0 right-0 bg-black/20 z-50 shadow-lg backdrop-blur-md border-b border-transparent">

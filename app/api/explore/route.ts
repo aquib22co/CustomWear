@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Drawing } from '@/model/drawing';
-import  connectDB  from '@/lib/db';
-import { Source_Serif_4 } from 'next/font/google';
+import connectDB from '@/lib/db';
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +8,7 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const file = formData.get('drawing_pic') as File;
-    
+
     if (!file) {
       return NextResponse.json(
         { message: 'No file uploaded' },
@@ -31,9 +30,9 @@ export async function POST(req: NextRequest) {
       drawing_on: formData.get('drawing_on') || 'canvas',
     });
 
-    return NextResponse.json({ 
-      success: true, 
-      data: drawing 
+    return NextResponse.json({
+      success: true,
+      data: drawing
     }, { status: 201 });
 
   } catch (error) {
@@ -45,41 +44,41 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET(req: NextRequest){
+export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
     const { searchParams } = new URL(req.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '12');
-    const skip = (page -1) * limit;
+    const skip = (page - 1) * limit;
 
     const drawings = await Drawing.find()
-      .sort({createdAt : -1})
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate('createdBy','name email');
+      .populate('createdBy', 'name email');
 
-      const totalDrawing = await Drawing.countDocuments();
+    const totalDrawing = await Drawing.countDocuments();
 
-      return NextResponse.json({
-        success : true,
-        data : drawings,
-        pagination : {
-          currentPage : page,
-          totalPages : Math.ceil(totalDrawing/limit),
-          totalDrawing,
-        }
-      })
+    return NextResponse.json({
+      success: true,
+      data: drawings,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalDrawing / limit),
+        totalDrawing,
+      }
+    })
   } catch (error) {
-    console.error('Fetch error:',error);
+    console.error('Fetch error:', error);
     return NextResponse.json(
       {
-        message : 'error fetching the Designs'
+        message: 'error fetching the Designs'
       },
       {
-        status : 500
+        status: 500
       }
     )
-  }  
+  }
 }
