@@ -75,15 +75,15 @@ export default function ExploreGallery() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6">Drawing Gallery</h2>
-      
+    <div className="container px-4 py-8">
+      <h2 className="text-2xl text-gray-200 font-bold mb-6">Drawing Gallery</h2>
+
       {/* Grid of drawings */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="relative z-0 grid grid-cols-1 md:grid-cols-5 gap-6 rounded-lg">
         {drawings.map((drawing) => (
-          <div 
+          <div
             key={drawing._id}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
+            className="relative bg-gray-800 rounded-xl shadow-md overflow-hidden group"
           >
             <div className="relative h-48">
               <Image
@@ -93,13 +93,13 @@ export default function ExploreGallery() {
                 className="object-cover"
               />
             </div>
-            
+
             <div className="p-4">
-              <h3 className="font-semibold text-lg mb-2">
+              <h3 className="font-semibold text-gray-300 text-lg mb-2">
                 {drawing.drawing_name}
               </h3>
-              
-              <div className="text-sm text-gray-600">
+
+              <div className="text-sm text-gray-400">
                 <p>Created on: {new Date(drawing.createdAt).toLocaleDateString()}</p>
                 {drawing.createdBy && (
                   <p>By: {drawing.createdBy.name}</p>
@@ -107,9 +107,13 @@ export default function ExploreGallery() {
                 <p>Surface: {drawing.drawing_on}</p>
               </div>
             </div>
+
+            {/* Hover effect */}
+            <div className="absolute inset-0 rounded-xl border-2 border-transparent group-hover:border-gray-500 transition-all duration-300 ease-in-out"></div>
           </div>
         ))}
       </div>
+
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
@@ -121,11 +125,11 @@ export default function ExploreGallery() {
           >
             Previous
           </button>
-          
+
           <span className="px-4 py-2">
             Page {pagination.currentPage} of {pagination.totalPages}
           </span>
-          
+
           <button
             onClick={() => handlePageChange(pagination.currentPage + 1)}
             disabled={pagination.currentPage === pagination.totalPages}

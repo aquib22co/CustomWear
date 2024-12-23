@@ -6,6 +6,8 @@ import AnimatedGridPattern from '@/components/ui/animated-grid-pattern';
 import { cn } from "@/lib/utils";
 import { Search } from 'lucide-react';
 
+//To-Do: Add a button to navigate back to the home page
+
 const raleway = Raleway({
     subsets: ["latin"],
     weight: ["100", "400", "700"],
@@ -13,7 +15,7 @@ const raleway = Raleway({
 
 const Explore = () => {
     return (
-        <div className="relative min-h-screen bg-black">
+        <div className="min-h-screen bg-black">
             {/* Background Pattern */}
             <div className="fixed inset-0 z-0">
                 <AnimatedGridPattern
@@ -31,30 +33,31 @@ const Explore = () => {
             {/* Content */}
             <div className="relative z-10">
                 {/* Search and Filter Section */}
-                <div className="sticky top-0 bg-black/80 backdrop-blur-md border-b border-gray-800 px-4 py-4">
+                <div className="sticky top-0 z-50 bg-black/40 backdrop-blur-md border-b border-gray-800 px-4 py-4">
                     <div className="max-w-7xl mx-auto">
-                        <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4">
+                        <div className="flex flex-col items-center justify-center">
                             {/* Search Bar */}
-                            <div className="relative flex-1 max-w-xl">
+                            <div className="relative flex-1 w-full max-w-lg rounded-full mb-4">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-                                <input 
+                                <input
                                     type="text"
                                     placeholder="Search designs..."
-                                    className="w-full h-12 pl-10 pr-4 rounded-lg bg-gray-900/50 border border-gray-700 text-white placeholder:text-gray-400 focus:border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600"
+                                    className="w-full rounded-full h-12 pl-10 pr-4 bg-gray-900/50 border border-gray-700 text-white placeholder:text-gray-400 focus:border-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-600"
                                 />
                             </div>
-                            
+
                             {/* Filter Tags */}
-                            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                            <div className="flex gap-2 overflow-x-auto scrollbar-hide">
                                 {['All Designs', 'Popular', 'Recent', 'T-Shirts', 'Hoodies', 'Custom'].map((tag) => (
                                     <button
                                         key={tag}
-                                        className="px-6 py-3 rounded-full text-sm bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-colors whitespace-nowrap border border-gray-700 hover:text-white hover:border-gray-500"
+                                        className="px-3 py-1 text-xs rounded-full bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 transition-colors whitespace-nowrap border border-gray-700 hover:text-white hover:border-gray-500"
                                     >
                                         {tag}
                                     </button>
                                 ))}
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -66,7 +69,7 @@ const Explore = () => {
                         <h2 className={`${raleway.className} text-3xl font-bold text-white mb-8`}>
                             Featured Designs
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 gap-8">
                             <div className="bg-gray-900/40 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
                                 <DesignGallery />
                             </div>
@@ -83,8 +86,8 @@ const Explore = () => {
                                 View All →
                             </button>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-6">
-                            <div className="bg-gray-900/40 rounded-xl p-4 border border-gray-800 hover:border-gray-700 transition-all">
+                        <div className="grid grid-cols-1 gap-6">
+                            <div className="bg-gray-900/30 rounded-xl p-4 border border-gray-800 hover:border-gray-700 transition-all">
                                 <ExploreGallery />
                             </div>
                         </div>
