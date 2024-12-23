@@ -1,16 +1,54 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
 }
+
+.content-bg {
+  background-color: #1b1b1b;
+}
+
+.content {
+  z-index: 0;
+  /* equivalent to z-0 */
+  margin-top: 1rem;
+  /* equivalent to mt-4 */
+  background-color: #1b1b1b;
+  border-radius: 0.25rem;
+  /* equivalent to rounded (4px) */
+  max-width: 410px;
+  /* applied for smaller screens */
+  height: 100%;
+  /* equivalent to h-full */
+  min-height: 610px;
+  /* equivalent to min-h-[610px] */
+  margin-left: 5rem;
+  /* equivalent to ml-20 */
+  padding: 2rem;
+  /* equivalent to p-8 */
+}
+
+@media (min-width: 768px) {
+  .content {
+    max-width: 1440px;
+    /* equivalent to md:max-w-[1440px] for medium screens and up */
+  }
+}
+
+
+.card-bg {
+  background-color: #2b2b2b;
+}
+
 body {
   background-color: black;
   font-family: Arial, Helvetica, sans-serif;

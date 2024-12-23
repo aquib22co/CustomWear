@@ -1,20 +1,14 @@
+import { UserButton } from '@clerk/nextjs';
 import { FaUndo, FaRedo } from 'react-icons/fa';
 
-const Navbar = ({ title }: { title: string }) => {
+const Navbar = ({ title }: { title: string | null }) => {
     return (
-        <nav className="flex justify-between items-center px-6 py-3 bg-black/30 backdrop-blur-md text-white border-b border-b-white/10 shadow-lg">
-            <div className="flex space-x-4">
-                <button className="flex items-center space-x-2 text-sm hover:text-gray-200">
-                    <FaUndo />
-                    <span>Undo</span>
-                </button>
-                <button className="flex items-center space-x-2 text-sm hover:text-gray-200">
-                    <FaRedo />
-                    <span>Redo</span>
-                </button>
-            </div>
-            <div className="flex-grow text-center">
+        <nav className="sticky top-0 z-20 flex justify-center items-center px-6 py-3 bg-black/30 backdrop-blur-md text-white border-b border-b-white/10 shadow-lg">
+            <div className="flex items-center">
                 <h1 className="text-lg font-bold tracking-wide">{title}</h1>
+            </div>
+            <div className="fixed right-6">
+                <UserButton />
             </div>
             <div className="w-24"></div>
         </nav>
