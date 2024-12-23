@@ -14,8 +14,10 @@
     "@clerk/nextjs": "^6.9.2",
     "@radix-ui/react-slot": "^1.1.0",
     "@types/multer": "^1.4.12",
+    "blocksin-system": "^1.6.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "fabric": "^6.5.3",
     "framer-motion": "^11.15.0",
     "lucide-react": "^0.468.0",
     "mongodb": "^6.12.0",
@@ -26,6 +28,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
+    "sebikostudio-icons": "^1.4.7",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-textshadow": "^2.1.3"
