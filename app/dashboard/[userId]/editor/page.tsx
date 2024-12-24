@@ -3,9 +3,9 @@ import { useUser } from "@clerk/nextjs";
 import Navbar from "@/components/dashboard/Navbar";
 import SideBar from "@/components/dashboard/SideBar";
 import React, { useEffect, useState, useRef } from "react";
-import { Canvas, Rect, FabricImage, Circle } from "fabric";
+import { Canvas, Rect, FabricImage, Circle,Triangle } from "fabric";
 import { Button } from "@/components/ui/button";
-import { FaRegSquare } from "react-icons/fa";
+import Settings from "@/components/Editor/Settings";
 
 const Editor = () => {
     const { user } = useUser();
@@ -24,7 +24,7 @@ const Editor = () => {
 
             setCanvas(initCanvas);
 
-            FabricImage.fromURL("/T-Shirt.png", {
+            FabricImage.fromURL("/isolated-t-shirt-1852114_1280.webp", {
                 crossOrigin: 'anonymous'
             }).then(img => {
                 img.scaleToWidth(400);
@@ -53,6 +53,22 @@ const Editor = () => {
         }
     };
 
+    const addTriangle = () =>{
+        if (canvas) {
+            const triangle = new Triangle({
+                top :100,
+                height : 60,
+                left : 100,
+                width : 100,
+                fill : "black",
+                stroke : "pink",
+                strokeWidth : 2,
+            })
+
+            canvas.add(triangle);
+        }
+    }
+
     const addCircle = () => {
         if(canvas){
             const circle = new Circle({
@@ -64,11 +80,12 @@ const Editor = () => {
             canvas.add(circle)
         }
     }
+
     return (
         <div>
             <Navbar title="Editor" />
             {user && <SideBar userId={user.id} />}
-            <div className="flex items-center justify-center h-screen ">
+            <div className="flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center space-y-4">
                     <Button
                         onClick={addRectangle}
@@ -76,7 +93,6 @@ const Editor = () => {
                         size="default"
                         className="flex items-center space-x-2"
                     >
-                        <FaRegSquare />
                         <span className="text-white">Add Rectangle</span>
                     </Button>
 
@@ -89,12 +105,23 @@ const Editor = () => {
                         <span className="text-white">Add Circle</span>
 
                     </Button>
+
+                    <Button
+                        onClick={addTriangle}
+                        variant="ghost"
+                        size="lg"
+                        className="flex items-center space-x-2"
+                    >
+                        <span className="text-white">Add Triangle</span>
+
+                    </Button>
                 </div>
                 <canvas
                     id="canvas"
                     ref={canvasRef}
                     className="shadow-lg border border-gray-300"
                 />
+                <Settings canvas={canvas}/>
             </div>
         </div>
     );
