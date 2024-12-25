@@ -6,6 +6,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Canvas, Rect, FabricImage, Circle,Triangle } from "fabric";
 import { Button } from "@/components/ui/button";
 import Settings from "@/components/Editor/Settings";
+import ClothesPanel from "@/components/Editor/ClothesPanel";
 
 const Editor = () => {
     const { user } = useUser();
@@ -24,21 +25,26 @@ const Editor = () => {
 
             setCanvas(initCanvas);
 
-            FabricImage.fromURL("/isolated-t-shirt-1852114_1280.webp", {
-                crossOrigin: 'anonymous'
-            }).then(img => {
-                img.scaleToWidth(400);
-                img.scaleToHeight(400);
-                initCanvas.add(img);
-                initCanvas.renderAll();
-            })
-
             return () => {
                 initCanvas.dispose();
             };
         }
     }, []);
-
+const handleClothingSelect = (imagePath :string) => {
+    if(canvas){
+        FabricImage.fromURL(imagePath, {
+            crossOrigin: 'anonymous'
+        }).then(img => {
+            img.scaleToWidth(400);
+            img.scaleToHeight(400);
+            
+            canvas.add(img);
+            canvas.renderAll();
+        }).catch(err => {
+            console.error("Error Laoding the image :",err);
+        })
+    }
+}
     const addRectangle = () => {
         if (canvas) {
             const rect = new Rect({
@@ -87,6 +93,7 @@ const Editor = () => {
             {user && <SideBar userId={user.id} />}
             <div className="flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center space-y-4">
+                    <ClothesPanel onSelectClothing={handleClothingSelect}/>
                     <Button
                         onClick={addRectangle}
                         variant="ghost"

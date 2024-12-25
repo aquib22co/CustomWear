@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { Canvas, FabricObject } from "fabric";
+import { Trash2 } from "lucide-react";
 
 // Define more specific types for our Fabric objects
 interface FabricTypeObject {
@@ -20,10 +21,10 @@ interface SettingsProps {
 
 export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
   const [selectedObject, setSelectedObject] = useState<FabricTypeObject | any>(null);
-  const [width, setWidth] = useState<number|string>("");
-  const [height, setHeight] = useState<number|string>("");
-  const [diameter, setDiameter] = useState<FabricTypeObject|any>();
-  const [color, setColor] = useState<FabricTypeObject|any>("");
+  const [width, setWidth] = useState<number | string>("");
+  const [height, setHeight] = useState<number | string>("");
+  const [diameter, setDiameter] = useState<FabricTypeObject | any>();
+  const [color, setColor] = useState<FabricTypeObject | any>("");
 
   const clearSettings = () => {
     setWidth("");
@@ -32,6 +33,14 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     setColor("");
   };
 
+  const handleDelete = () => {
+    if (canvas && selectedObject) {
+      canvas.remove(selectedObject);
+      canvas.renderAll();
+      setSelectedObject(null);
+      clearSettings();
+    }
+  }
   const handleObjectSelection = (object: FabricTypeObject | null) => {
     if (!object) return;
     setSelectedObject(object);
@@ -51,45 +60,45 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     }
   };
 
-  const handleWidthChange = (e:any)=> {
-    const value = e.target.value.replace(/,/g,"");
-    const intValue = parseInt(value,10);
+  const handleWidthChange = (e: any) => {
+    const value = e.target.value.replace(/,/g, "");
+    const intValue = parseInt(value, 10);
 
-    if(selectedObject && selectedObject.type == "rect" && intValue >= 0){
-      selectedObject.set({ width: intValue / selectedObject.scaleX});
+    if (selectedObject && selectedObject.type == "rect" && intValue >= 0) {
+      selectedObject.set({ width: intValue / selectedObject.scaleX });
       canvas?.renderAll();
     }
     setWidth(intValue)
   }
-  const handleHeightChange = (e:any)=> {
-    const value = e.target.value.replace(/,/g,"");
-    const intValue = parseInt(value,10);
+  const handleHeightChange = (e: any) => {
+    const value = e.target.value.replace(/,/g, "");
+    const intValue = parseInt(value, 10);
 
-    if(selectedObject && selectedObject.type == "rect" && intValue >= 0){
-      selectedObject.set({ height: intValue / selectedObject.scaleY});
+    if (selectedObject && selectedObject.type == "rect" && intValue >= 0) {
+      selectedObject.set({ height: intValue / selectedObject.scaleY });
       canvas?.renderAll();
     }
     setHeight(intValue)
   }
-  
-  const handleColorChange = (e:any)=> {
+
+  const handleColorChange = (e: any) => {
     const value = e.target.value;
 
     setColor(value);
 
-    if(selectedObject){
-      selectedObject.set({fill: value})
+    if (selectedObject) {
+      selectedObject.set({ fill: value })
       canvas?.renderAll();
     }
   }
-  const handleDiameterChange = (e:any)=> {
-    const value = e.target.value.replace(/,/g,"");
-    const intValue = parseInt(value,10);
+  const handleDiameterChange = (e: any) => {
+    const value = e.target.value.replace(/,/g, "");
+    const intValue = parseInt(value, 10);
 
     setDiameter(intValue);
 
-    if(selectedObject && selectedObject.type === "circle" && intValue >= 0){
-      selectedObject.set({radius : intValue /2/ selectedObject.scaleX});
+    if (selectedObject && selectedObject.type === "circle" && intValue >= 0) {
+      selectedObject.set({ radius: intValue / 2 / selectedObject.scaleX });
       canvas?.renderAll();
     }
   }
@@ -119,15 +128,22 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
         canvas.off("object:modified");
         canvas.off("object:scaling");
       };
-      
+
     }
-  }, [canvas]); // Add canvas as dependency
+  }, [canvas]);
 
   return (
     <div>
       {selectedObject && (
         <div className="p-4 text-white">
           <h3 className="text-lg font-bold mb-4">Object Settings</h3>
+          <button
+            onClick={handleDelete}
+            className="p-2 bg-red-500 hover:bg-red-600 rounded-md flex items-center gap-2 transition-colors"
+          >
+            <Trash2 size={18}/>
+            <span>Delete</span>
+          </button>
           <div className="space-y-4">
             {selectedObject.type === "rect" && (
               <>
