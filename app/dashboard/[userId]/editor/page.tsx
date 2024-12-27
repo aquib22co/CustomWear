@@ -9,12 +9,16 @@ import Settings from "@/components/Editor/Settings";
 import ClothesPanel from "@/components/Editor/ClothesPanel";
 import CanvasSettings from "@/components/Editor/CanvasSettings";
 import { handleObjectMoving,clearGuidelines } from "@/components/Editor/SnappingHelper";
+import Cropping from "@/components/Editor/Cropping";
+import CroppingSettings from "@/components/Editor/CroppingSettings";
 
 const Editor = () => {
     const { user } = useUser();
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [canvas, setCanvas] = useState<Canvas | null>(null);
-    const [guidelines,setGuidelines] = useState([])
+    // const [guidelines,setGuidelines] = useState([])
+    const [refreshKey,setResfreshKey] = useState();
+
 
     useEffect(() => {
         if (canvasRef.current) {
@@ -28,23 +32,27 @@ const Editor = () => {
 
             setCanvas(initCanvas);
 
-            initCanvas.on("object:moving", (event) => {
-                if (event.target) {
-                    handleObjectMoving(initCanvas, event.target, guidelines, setGuidelines);
-                }
-            });
+            // initCanvas.on("object:moving", (event) => {
+            //     if (event.target) {
+            //         handleObjectMoving(initCanvas, event.target, guidelines, setGuidelines);
+            //     }
+            // });
 
-            // Clear guidelines on selection:cleared
-            initCanvas.on("object:modified", () => {
-                clearGuidelines(initCanvas);
-            });
+            // // Clear guidelines on selection:cleared
+            // initCanvas.on("object:modified", () => {
+            //     clearGuidelines(initCanvas);
+            // });
 
 
             return () => {
                 initCanvas.dispose();
             };
         }
-    }, [guidelines]);
+    }, []);
+
+    const handleFramesUpdate = () => {
+        setResfreshKey((prevKey:any) => prevKey+1)
+    }
     const handleClothingSelect = (imagePath: string) => {
         if (canvas) {
             FabricImage.fromURL(imagePath, {
@@ -108,6 +116,7 @@ const Editor = () => {
             {user && <SideBar userId={user.id} />}
             <div className="flex items-center justify-center h-screen">
                 <div className="flex flex-col items-center space-y-4">
+                    <Cropping canvas={canvas} onFrameUpdate = {handleFramesUpdate}/>
                     <ClothesPanel onSelectClothing={handleClothingSelect} />
                     <Button
                         onClick={addRectangle}
@@ -146,6 +155,7 @@ const Editor = () => {
                 <div className="flex justify-end">
                     <Settings canvas={canvas} />
                     <CanvasSettings canvas={canvas} />
+                    <CroppingSettings canvas={canvas} refreshKey ={refreshKey}/>
                 </div>
 
             </div>
