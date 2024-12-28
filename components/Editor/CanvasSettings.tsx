@@ -33,25 +33,25 @@ function CanvasSettings({ canvas }: CanvasSettingsProps) {
     }
 
     return (
-        <div className="text-white">
+        <div className="text-gray-200 content-bg p-[33px] rounded-t">
             <h3 className="text-lg font-bold mb-4">Canvas Settings</h3>
             <div className="space-y-4">
                 <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium">Canvas Width</label>
+                    <label className="text-sm font-medium text-gray-300">Canvas Width</label>
                     <input
                         type="number"
                         value={canvasWidth}
                         onChange={handleWidthChange}
-                        className="bg-gray-700 rounded px-3 py-1 text-white"
+                        className="card-bg rounded border border-gray-600 px-3 py-1 text-gray-400 transition-all hover:bg-gray-800 duration-300 hover:scale-105"
                     />
                 </div>
                 <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium">Canvas Height</label>
+                    <label className="text-sm font-medium text-gray-300">Canvas Height</label>
                     <input
                         type="number"
                         value={canvasHeight}
                         onChange={handleHeightChange}
-                        className="bg-gray-700 rounded px-3 py-1 text-white"
+                        className="card-bg rounded border border-gray-600 px-3 py-1 text-gray-400 transition-all hover:bg-gray-800 duration-300 hover:scale-105"
                     />
                 </div>
             </div>
