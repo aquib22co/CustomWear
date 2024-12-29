@@ -29,6 +29,7 @@
     "react-dom": "^19.0.0",
     "react-icons": "^5.4.0",
     "sebikostudio-icons": "^1.4.7",
+    "shadcn": "^2.1.8",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "tailwindcss-textshadow": "^2.1.3"

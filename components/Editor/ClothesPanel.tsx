@@ -37,14 +37,14 @@ interface ClothesPanelProps {
 
 const ClothesPanel: React.FC<ClothesPanelProps> = ({ onSelectClothing }) => {
     return (
-        <div className="bg-gray-800 p-4 rounded-lg w-64">
+        <div className="content-bg p-4 rounded w-64 m-6 transition-transform duration-300 hover:scale-105">
             <h3 className="text-white text-lg font-bold mb-4">Select Clothing</h3>
             <div className="grid grid-cols-2 gap-3">
                 {clothingItems.map((item) => (
                     <button
                         key={item.id}
                         onClick={() => onSelectClothing(item.imagePath)}
-                        className="bg-gray-700 p-2 rounded-lg hover:bg-gray-600 transition-colors"
+                        className="card-bg p-2 rounded hover:bg-gray-600 transition-all duration-300 hover:scale-105"
                     >
                         <div className="relative w-full aspect-square mb-2">
                             <Image
