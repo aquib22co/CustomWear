@@ -5,7 +5,9 @@ import { Raleway } from "next/font/google";
 import AnimatedGridPattern from '@/components/ui/animated-grid-pattern';
 import { cn } from "@/lib/utils";
 import { Search } from 'lucide-react';
-
+import { SignedIn } from '@clerk/nextjs';
+import { FiChevronLeft } from 'react-icons/fi';
+import Link from 'next/link';
 //To-Do: Add a button to navigate back to the home page
 
 const raleway = Raleway({
@@ -34,7 +36,15 @@ const Explore = () => {
             <div className="relative z-10">
                 {/* Search and Filter Section */}
                 <div className="sticky top-0 z-50 bg-black/40 backdrop-blur-md border-b border-gray-800 px-4 py-4">
-                    <div className="max-w-7xl mx-auto">
+                    <div className="flex justify-center items-center mx-auto">
+                        <div className='fixed flex justify-items-center left-10 w-10 z-50'>
+                            <Link
+                                href="/"
+                                className="text-gray-400 hover:text-gray-200 p-4 hover:bg-gray-400/20 rounded-full transition-all duration-300"
+                            >
+                                <FiChevronLeft size={24} />
+                            </Link>
+                        </div>
                         <div className="flex flex-col items-center justify-center">
                             {/* Search Bar */}
                             <div className="relative flex-1 w-full max-w-lg rounded-full mb-4">
@@ -65,16 +75,18 @@ const Explore = () => {
                 {/* Main Content */}
                 <div className="max-w-7xl mx-auto px-4 py-12">
                     {/* Featured Section */}
-                    <section className="mb-16">
-                        <h2 className={`${raleway.className} text-3xl font-bold text-white mb-8`}>
-                            Featured Designs
-                        </h2>
-                        <div className="grid grid-cols-1 gap-8">
-                            <div className="bg-gray-900/40 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
-                                <DesignGallery />
+                    <SignedIn>
+                        <section className="mb-16">
+                            <h2 className={`${raleway.className} text-3xl font-bold text-white mb-8`}>
+                                Upload Designs
+                            </h2>
+                            <div className="grid grid-cols-1 gap-8">
+                                <div className="bg-gray-900/40 rounded-xl p-6 border border-gray-800 hover:border-gray-700 transition-all">
+                                    <DesignGallery />
+                                </div>
                             </div>
-                        </div>
-                    </section>
+                        </section>
+                    </SignedIn>
 
                     {/* All Designs */}
                     <section>

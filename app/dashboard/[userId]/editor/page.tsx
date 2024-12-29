@@ -167,13 +167,13 @@ const Editor = () => {
         <div>
             <Navbar title="Editor" />
             {user && <SideBar userId={user.id} />}
-            <div className="flex flex-col md:flex-row  justify-center">
-                <div className="relative h-fit left-20 top-10 md:top-40">
+            <div className="flex flex-col md:flex-row  justify-center items-center md:items-start ">
+                <div className="relative h-fit left-5 mb-8 md:left-20 top-10 md:top-1">
                     <ClothesPanel onSelectClothing={handleClothingSelect} />
                 </div>
                 <div className="flex flex-col justify-center items-center h-full w-full ">
                     <div className="relative mb-8">
-                        <Dock iconMagnification={60} iconDistance={100}>
+                        <Dock iconMagnification={60} iconDistance={100} className="ml-8">
                             <DockIcon className="bg-white/10">
                                 <Button
                                     onClick={addRectangle}
@@ -256,7 +256,7 @@ const Editor = () => {
 
                     <Settings canvas={canvas} />
                 </div>
-                <div className="flex flex-col justify-center items-center">
+                <div className="flex flex-col justify-center items-center mt-8">
                     <CanvasSettings canvas={canvas} />
                     <CroppingSettings canvas={canvas} refreshKey={refreshKey} />
                 </div>
