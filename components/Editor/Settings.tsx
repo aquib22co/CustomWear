@@ -122,7 +122,7 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
   const handleFontFamilyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFontFamily(value);
-    if (selectedObject && selectedObject.type === "text") {
+    if (selectedObject && selectedObject.type === "text" || selectedObject.type === "textbox") {
       selectedObject.set({ fontFamily: value });
       canvas?.renderAll();
     }
@@ -131,7 +131,7 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
   const handleFontWeightChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFontWeight(value);
-    if (selectedObject && selectedObject.type === "text") {
+    if (selectedObject && selectedObject.type === "text" || selectedObject.type === "textbox") {
       selectedObject.set({ fontWeight: value });
       canvas?.renderAll();
     }
@@ -140,7 +140,7 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
   const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     setFontSize(value);
-    if (selectedObject && selectedObject.type === "text") {
+    if (selectedObject && selectedObject.type === "text" || selectedObject.type === "textbox") {
       selectedObject.set({ fontSize: value });
       canvas?.renderAll();
     }
