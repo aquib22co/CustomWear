@@ -1,4 +1,3 @@
-import { format } from 'path';
 import React, { useState, useEffect } from 'react'
 
 const CroppingSettings = ({ canvas, refreshKey }: any) => {
@@ -30,17 +29,17 @@ const CroppingSettings = ({ canvas, refreshKey }: any) => {
     canvas.renderAll();
   }
 
-  const exportFrameAsPNG = () => {
+  const exportFrameAsPNG = async() => {
     if (!selectedFrame) return;
 
     frames.forEach((frame: any) => {
       frame.set("visible", false);
-    })
+    });
 
     selectedFrame.set({
       strokeWidth: 0,
       visible: true
-    })
+    });
 
     const dataURL = canvas.toDataURL({
       left: selectedFrame.left,
@@ -48,23 +47,49 @@ const CroppingSettings = ({ canvas, refreshKey }: any) => {
       width: selectedFrame.width * selectedFrame.scaleX,
       height: selectedFrame.height * selectedFrame.scaleY,
       format: "png",
-    })
+    });
 
     selectedFrame.set({
       strokeWidth: 1,
-    })
+    });
 
     frames.forEach((frame: any) => {
       frame.set("visible", true);
-    })
+    });
 
     canvas.renderAll();
 
-    const link = document.createElement("a");
-    link.href = dataURL
-    link.download = `${selectedFrame.name}.png`;
-    link.click();
-  }
+    // Convert base64 to blob
+    const fetchResponse = await fetch(dataURL);
+    const blob = await fetchResponse.blob();
+
+    // Create FormData and append the file
+    const formData = new FormData();
+    formData.append('drawing_pic', blob, `${selectedFrame.name}.png`);
+
+    try {
+        const response = await fetch('/api/editor', {
+            method: 'POST',
+            body: formData, // Send as FormData instead of JSON
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to save drawing');
+        }
+
+        // Create download link
+        const link = document.createElement("a");
+        link.href = dataURL;
+        link.download = `${selectedFrame.name}.png`;
+        link.click();
+
+        // You might want to show a success message
+        console.log('Drawing saved successfully');
+    } catch (error) {
+        console.error('Error saving drawing:', error);
+        // Handle error (show error message to user)
+    }
+};
 
 
   return (
