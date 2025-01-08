@@ -1,4 +1,5 @@
 # CustomWear
+![Banner](public/Castam-war.png)
 
 CustomWear is an innovative e-commerce platform that allows users to design their own T-shirts on an interactive canvas and purchase them for printing and delivery. The project is designed to offer a seamless and engaging user experience for creating personalized clothing.
 
@@ -18,6 +19,15 @@ CustomWear is an innovative e-commerce platform that allows users to design thei
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB
 - **Others**: 
+
+## Project ScreenShots
+
+![Project Demo](public/Custom-war.gif)
+![Screenshot 1](public/SC1.png)
+![Screenshot 2](public/SC2.png)
+![Screenshot 3](public/SC3.png)
+![Screenshot 4](public/SC4.png)
+
 
 ## Installation
 

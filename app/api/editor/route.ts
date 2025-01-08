@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
         await connectDB();
 
         const { userId } = await auth();
-
+        console.log(userId);
         if (!userId) {
             return NextResponse.json(
                 { message: "Unauthorized" },
