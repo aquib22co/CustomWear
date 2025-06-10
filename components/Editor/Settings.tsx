@@ -1,13 +1,13 @@
 "use client";
-import React, { useState, useEffect, useCallback } from "react"; // Added useCallback
+import React, { useState, useEffect, useCallback } from "react";
 // Import specific types from 'fabric' for better type safety
-// FIX: Changed IEvent to TEvent as suggested by the error message.
-import { Canvas, Object as FabricObject, TEvent, IRectOptions, ICircleOptions, ITextOptions, ITextboxOptions } from "fabric";
+// FIX: Changed IEvent to TEvent and I...Options to T...Options as per Fabric.js type definitions.
+import { Canvas, Object as FabricObject, TEvent, TRectOptions, TCircleOptions, TTextOptions, TTextboxOptions } from "fabric";
 import { Trash2 } from "lucide-react";
 
 // Define a union type for selected Fabric objects, including their specific properties
 // This allows selectedObject to be any of these specific types or the base FabricObject
-type SelectableFabricObject = (FabricObject & (IRectOptions | ICircleOptions | ITextOptions | ITextboxOptions));
+type SelectableFabricObject = (FabricObject & (TRectOptions | TCircleOptions | TTextOptions | TTextboxOptions));
 
 // Props for the Settings component
 interface SettingsProps {
@@ -71,14 +71,16 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       setColor(currentObject.fill?.toString() || "");
       setDiameter(""); // Clear diameter for rects
     } else if (currentObject.type === "circle") {
-      const radius = (currentObject as FabricObject & ICircleOptions).radius || 0;
+      // FIX: Updated to use TCircleOptions
+      const radius = (currentObject as FabricObject & TCircleOptions).radius || 0;
       setDiameter(String(Math.round(radius * 2 * (currentObject.scaleX || 1))));
       setWidth(""); // Clear width for circles
       setHeight(""); // Clear height for circles
       setColor(currentObject.fill?.toString() || "");
     } else if (currentObject.type === "textbox" || currentObject.type === "text") {
       // If it's a text object, update font-related properties
-      const textObject = currentObject as FabricObject & (ITextOptions | ITextboxOptions);
+      // FIX: Updated to use TTextOptions | TTextboxOptions
+      const textObject = currentObject as FabricObject & (TTextOptions | TTextboxOptions);
       setFontFamily(textObject.fontFamily || "Arial");
       setFontWeight(textObject.fontWeight || "normal");
       setFontSize(textObject.fontSize || 30);
@@ -138,7 +140,8 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     // Only apply if selected object is a circle and value is a valid non-negative number
     if (selectedObject && selectedObject.type === "circle" && !isNaN(intValue) && intValue >= 0) {
       // For circles, diameter is 2 * radius. Set radius based on desired diameter and scale.
-      const circleObject = selectedObject as FabricObject & ICircleOptions;
+      // FIX: Updated to use TCircleOptions
+      const circleObject = selectedObject as FabricObject & TCircleOptions;
       circleObject.set({ radius: intValue / 2 / (circleObject.scaleX || 1) });
       canvas?.renderAll();
     }
@@ -151,7 +154,8 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     setFontFamily(value);
     // Apply if selected object is text or textbox
     if (selectedObject && (selectedObject.type === "text" || selectedObject.type === "textbox")) {
-      const textObject = selectedObject as FabricObject & (ITextOptions | ITextboxOptions);
+      // FIX: Updated to use TTextOptions | TTextboxOptions
+      const textObject = selectedObject as FabricObject & (TTextOptions | TTextboxOptions);
       textObject.set({ fontFamily: value });
       canvas?.renderAll();
     }
@@ -162,7 +166,8 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     const value = e.target.value;
     setFontWeight(value);
     if (selectedObject && (selectedObject.type === "text" || selectedObject.type === "textbox")) {
-      const textObject = selectedObject as FabricObject & (ITextOptions | ITextboxOptions);
+      // FIX: Updated to use TTextOptions | TTextboxOptions
+      const textObject = selectedObject as FabricObject & (TTextOptions | TTextboxOptions);
       textObject.set({ fontWeight: value });
       canvas?.renderAll();
     }
@@ -175,7 +180,8 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     if (!isNaN(value)) {
       setFontSize(value);
       if (selectedObject && (selectedObject.type === "text" || selectedObject.type === "textbox")) {
-        const textObject = selectedObject as FabricObject & (ITextOptions | ITextboxOptions);
+        // FIX: Updated to use TTextOptions | TTextboxOptions
+        const textObject = selectedObject as FabricObject & (TTextOptions | TTextboxOptions);
         textObject.set({ fontSize: value });
         canvas?.renderAll();
       }
