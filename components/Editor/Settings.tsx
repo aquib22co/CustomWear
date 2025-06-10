@@ -1,7 +1,8 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; // Added useCallback
 // Import specific types from 'fabric' for better type safety
-import { Canvas, Object as FabricObject, IEvent, IRectOptions, ICircleOptions, ITextOptions, ITextboxOptions } from "fabric";
+// FIX: Changed IEvent to TEvent as suggested by the error message.
+import { Canvas, Object as FabricObject, TEvent, IRectOptions, ICircleOptions, ITextOptions, ITextboxOptions } from "fabric";
 import { Trash2 } from "lucide-react";
 
 // Define a union type for selected Fabric objects, including their specific properties
@@ -30,7 +31,7 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
   const [fontSize, setFontSize] = useState<number>(30);
 
   // Clears all input settings to their default/empty states
-  const clearSettings = () => {
+  const clearSettings = useCallback(() => {
     setWidth("");
     setHeight("");
     setDiameter("");
@@ -38,20 +39,20 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     setFontFamily("Arial");
     setFontWeight("normal");
     setFontSize(30);
-  };
+  }, []); // No dependencies, so can be memoized
 
   // Handles deleting the selected object from the canvas
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (canvas && selectedObject) {
       canvas.remove(selectedObject); // Remove the object
       canvas.renderAll(); // Re-render canvas to reflect the change
       setSelectedObject(null); // Clear selected object state
       clearSettings(); // Clear settings inputs
     }
-  };
+  }, [canvas, selectedObject, clearSettings]); // Dependencies for useCallback
 
   // Updates settings based on the newly selected object
-  const handleObjectSelection = (object: FabricObject | null) => {
+  const handleObjectSelection = useCallback((object: FabricObject | null) => {
     if (!object) {
       setSelectedObject(null);
       clearSettings();
@@ -89,10 +90,10 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       // Clear all settings if an unhandled object type is selected
       clearSettings();
     }
-  };
+  }, [clearSettings]); // Dependency for useCallback
 
   // Handles changes to the width input for rectangular objects
-  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleWidthChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/,/g, ""); // Remove commas
     const intValue = parseInt(value, 10); // Parse to integer
 
@@ -104,10 +105,10 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       canvas?.renderAll(); // Re-render canvas
     }
     setWidth(value); // Update local state with string value from input
-  };
+  }, [selectedObject, canvas]); // Dependencies for useCallback
 
   // Handles changes to the height input for rectangular objects
-  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleHeightChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/,/g, "");
     const intValue = parseInt(value, 10);
 
@@ -116,10 +117,10 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       canvas?.renderAll();
     }
     setHeight(value);
-  };
+  }, [selectedObject, canvas]); // Dependencies for useCallback
 
   // Handles changes to the color input
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleColorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setColor(value); // Update local state
 
@@ -127,10 +128,10 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       selectedObject.set({ fill: value }); // Set fill color for the object
       canvas?.renderAll();
     }
-  };
+  }, [selectedObject, canvas]); // Dependencies for useCallback
 
   // Handles changes to the diameter input for circular objects
-  const handleDiameterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDiameterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/,/g, "");
     const intValue = parseInt(value, 10);
 
@@ -142,10 +143,10 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       canvas?.renderAll();
     }
     setDiameter(value); // Update local state with string value from input
-  };
+  }, [selectedObject, canvas]); // Dependencies for useCallback
 
   // Handles changes to the font family select
-  const handleFontFamilyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFontFamilyChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFontFamily(value);
     // Apply if selected object is text or textbox
@@ -154,10 +155,10 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       textObject.set({ fontFamily: value });
       canvas?.renderAll();
     }
-  };
+  }, [selectedObject, canvas]); // Dependencies for useCallback
 
   // Handles changes to the font weight select
-  const handleFontWeightChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleFontWeightChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFontWeight(value);
     if (selectedObject && (selectedObject.type === "text" || selectedObject.type === "textbox")) {
@@ -165,10 +166,10 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
       textObject.set({ fontWeight: value });
       canvas?.renderAll();
     }
-  };
+  }, [selectedObject, canvas]); // Dependencies for useCallback
 
   // Handles changes to the font size input
-  const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFontSizeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
     // Only apply if value is a valid number
     if (!isNaN(value)) {
@@ -179,13 +180,13 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
         canvas?.renderAll();
       }
     }
-  };
+  }, [selectedObject, canvas]); // Dependencies for useCallback
 
   // useEffect to manage Fabric.js canvas event listeners
   useEffect(() => {
     if (canvas) {
       // Define a handler for selection events
-      const handleSelection = (event: IEvent<FabricObject>) => {
+      const handleSelection = (event: TEvent<FabricObject>) => { // FIX: Changed IEvent to TEvent
         // Fabric.js selection events can have `selected` (array) or `target` (single object)
         // Prioritize `selected[0]` if multiple objects are selected, otherwise `target`
         handleObjectSelection(event.selected?.[0] || event.target || null);
@@ -213,7 +214,7 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
         canvas.off("object:scaling", handleSelection);
       };
     }
-  }, [canvas]); // Re-run effect only when the canvas instance changes
+  }, [canvas, clearSettings, handleObjectSelection]); // Dependencies for useEffect
 
   return (
     <div>
