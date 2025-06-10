@@ -1,27 +1,38 @@
 import React, { useState, useEffect } from 'react';
+// Import Canvas and Rect types from fabric
 import { Canvas, Rect, Object as FabricObject } from 'fabric';
 
+// 1. Define a custom interface for your Fabric.js Rect objects that have a 'name' property
+// This extends Fabric's Rect type and adds the 'name' property as a string.
+interface NamedRect extends Rect {
+  name: string;
+}
 
+// Define the props interface for the CroppingSettings component
 interface CroppingSettingsProps {
-  canvas: Canvas | null; 
-  refreshKey: number; 
+  canvas: Canvas | null; // The Fabric.js Canvas instance, can be null initially
+  refreshKey: number; // A number to trigger re-renders/updates (from the Cropping component)
 }
 
 const CroppingSettings = ({ canvas, refreshKey }: CroppingSettingsProps) => {
 
-  const [frames, setFrames] = useState<Rect[]>([]);
-  const [selectedFrame, setSelectedFrame] = useState<Rect | undefined>();
+  // State to hold the array of custom NamedRect objects that represent frames
+  const [frames, setFrames] = useState<NamedRect[]>([]);
+  // State to hold the currently selected frame, can be a NamedRect or undefined
+  const [selectedFrame, setSelectedFrame] = useState<NamedRect | undefined>();
 
   // Function to update the list of frames by filtering objects on the canvas
   const updateFrames = () => {
     // Only proceed if the canvas instance is available
     if (canvas) {
       // Get all objects, then filter for those that are Rects and have names starting with "Frame"
-      const framesFromCanvas: Rect[] = canvas.getObjects().filter((obj: FabricObject) => {
-        // Ensure obj is a Rect and has a name property starting with "Frame"
-        // Type assertion `obj as Rect` is safe here because we check `name`
-        return (obj instanceof Rect) && obj.name && obj.name.startsWith("Frame");
-      }) as Rect[]; // Assert the filtered array is of type Rect[]
+      // We now explicitly check if `obj.name` exists and then assert it as `NamedRect`
+      const framesFromCanvas: NamedRect[] = canvas.getObjects().filter((obj: FabricObject) => {
+        // We are casting `obj` to `NamedRect` temporarily to access `name`
+        // The `instanceof Rect` check ensures it's a rectangle
+        // The `!!(obj as NamedRect).name` checks if the 'name' property exists and is not null/undefined/empty string
+        return (obj instanceof Rect) && !!(obj as NamedRect).name && (obj as NamedRect).name.startsWith("Frame");
+      }) as NamedRect[]; // Assert the filtered array is of type NamedRect[]
 
       setFrames(framesFromCanvas); // Update the frames state
 
@@ -42,7 +53,8 @@ const CroppingSettings = ({ canvas, refreshKey }: CroppingSettingsProps) => {
   // Handler for when a frame is selected from the dropdown
   const handleFrameSelect = (value: string) => {
     // Find the selected frame from the frames array based on its name
-    const selected = frames.find((frame: Rect) => frame.name === value);
+    // The `frame` in `frames.find` is already correctly typed as `NamedRect`
+    const selected = frames.find((frame: NamedRect) => frame.name === value);
     setSelectedFrame(selected); // Set the found frame as the selected one
 
     // If a frame is found, set it as the active object on the Fabric.js canvas
@@ -58,7 +70,7 @@ const CroppingSettings = ({ canvas, refreshKey }: CroppingSettingsProps) => {
     if (!selectedFrame || !canvas) return;
 
     // Temporarily hide all frames
-    frames.forEach((frame: Rect) => {
+    frames.forEach((frame: NamedRect) => {
       frame.set("visible", false);
     });
 
@@ -73,8 +85,8 @@ const CroppingSettings = ({ canvas, refreshKey }: CroppingSettingsProps) => {
     const dataURL = canvas.toDataURL({
       left: selectedFrame.left,
       top: selectedFrame.top,
-      width: selectedFrame.width * selectedFrame.scaleX,
-      height: selectedFrame.height * selectedFrame.scaleY,
+      width: (selectedFrame.width || 0) * (selectedFrame.scaleX || 1),
+      height: (selectedFrame.height || 0) * (selectedFrame.scaleY || 1),
       format: "png",
     });
 
@@ -84,7 +96,7 @@ const CroppingSettings = ({ canvas, refreshKey }: CroppingSettingsProps) => {
     });
 
     // Make all frames visible again
-    frames.forEach((frame: Rect) => {
+    frames.forEach((frame: NamedRect) => {
       frame.set("visible", true);
     });
 
@@ -144,7 +156,7 @@ const CroppingSettings = ({ canvas, refreshKey }: CroppingSettingsProps) => {
             <option value="" disabled>
               Select a frame
             </option>
-            {frames.map((frame: Rect) => ( // Type frame as Rect in map
+            {frames.map((frame: NamedRect) => ( // Type frame as NamedRect in map
               <option key={frame.name} value={frame.name}>
                 {frame.name}
               </option>
