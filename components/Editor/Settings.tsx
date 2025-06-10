@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import { fabric } from "fabric";
+import fabric from "fabric";
 import type { Canvas, Object as FabricObject, TEvent } from "fabric/fabric-impl";
 import { Trash2 } from "lucide-react";
 
