@@ -1,36 +1,35 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Canvas, FabricObject } from "fabric";
+// Import specific types from 'fabric' for better type safety
+import { Canvas, Object as FabricObject, IEvent, IRectOptions, ICircleOptions, ITextOptions, ITextboxOptions } from "fabric";
 import { Trash2 } from "lucide-react";
 
-// Define more specific types for our Fabric objects
-interface FabricTypeObject {
-  type?: string;
-  width?: number;
-  height?: number;
-  fill?: string | null;
-  scaleX?: number;
-  scaleY?: number;
-  radius?: number;
-  fontFamily?: string;
-  fontWeight?: string;
-  fontSize?: number;
-}
+// Define a union type for selected Fabric objects, including their specific properties
+// This allows selectedObject to be any of these specific types or the base FabricObject
+type SelectableFabricObject = (FabricObject & (IRectOptions | ICircleOptions | ITextOptions | ITextboxOptions));
 
+// Props for the Settings component
 interface SettingsProps {
-  canvas: Canvas | null;
+  canvas: Canvas | null; // The Fabric.js Canvas instance, can be null if not yet initialized
 }
 
 export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
-  const [selectedObject, setSelectedObject] = useState<FabricTypeObject | any>(null);
+  // State to hold the currently selected Fabric.js object.
+  // It can be a SelectableFabricObject (a union of common Fabric types) or null.
+  const [selectedObject, setSelectedObject] = useState<SelectableFabricObject | null>(null);
+
+  // States for object properties, using number | string for input values that can be empty
   const [width, setWidth] = useState<number | string>("");
   const [height, setHeight] = useState<number | string>("");
-  const [diameter, setDiameter] = useState<FabricTypeObject | any>();
-  const [color, setColor] = useState<FabricTypeObject | any>("");
+  const [diameter, setDiameter] = useState<number | string>(""); // For circle radius * 2
+  const [color, setColor] = useState<string>(""); // Color is always a string
+
+  // States for text-specific properties
   const [fontFamily, setFontFamily] = useState<string>("Arial");
   const [fontWeight, setFontWeight] = useState<string>("normal");
   const [fontSize, setFontSize] = useState<number>(30);
 
+  // Clears all input settings to their default/empty states
   const clearSettings = () => {
     setWidth("");
     setHeight("");
@@ -41,139 +40,180 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
     setFontSize(30);
   };
 
+  // Handles deleting the selected object from the canvas
   const handleDelete = () => {
     if (canvas && selectedObject) {
-      canvas.remove(selectedObject);
-      canvas.renderAll();
-      setSelectedObject(null);
-      clearSettings();
-    }
-  }
-
-  const handleObjectSelection = (object: FabricTypeObject | null) => {
-    if (!object) return;
-    setSelectedObject(object);
-    console.log(object.type);
-    // Update dimensions based on the selected object
-    if (object.type === "rect") {
-      setWidth(String(Math.round((object.width || 0) * (object.scaleX || 1))));
-      setHeight(String(Math.round((object.height || 0) * (object.scaleY || 1))));
-      setColor(object.fill?.toString() || "");
-      setDiameter("");
-    } else if (object.type === "circle") {
-      const radius = object.radius || 0;
-      setDiameter(String(Math.round(radius * 2 * (object.scaleX || 1))));
-      setWidth("");
-      setHeight("");
-      setColor(object.fill?.toString() || "");
-    } else if (object.type === "textbox" || object.type === "text") {
-      // If it's a text object, update font-related properties
-      setFontFamily(object.fontFamily || "Arial");
-      setFontWeight(object.fontWeight || "normal");
-      setFontSize(object.fontSize || 30);
+      canvas.remove(selectedObject); // Remove the object
+      canvas.renderAll(); // Re-render canvas to reflect the change
+      setSelectedObject(null); // Clear selected object state
+      clearSettings(); // Clear settings inputs
     }
   };
 
-  const handleWidthChange = (e: any) => {
+  // Updates settings based on the newly selected object
+  const handleObjectSelection = (object: FabricObject | null) => {
+    if (!object) {
+      setSelectedObject(null);
+      clearSettings();
+      return;
+    }
+
+    // Cast object to SelectableFabricObject for easier property access,
+    // relying on checks below to ensure valid property access.
+    const currentObject = object as SelectableFabricObject;
+    setSelectedObject(currentObject);
+
+    // Update dimensions and color based on object type
+    if (currentObject.type === "rect") {
+      setWidth(String(Math.round((currentObject.width || 0) * (currentObject.scaleX || 1))));
+      setHeight(String(Math.round((currentObject.height || 0) * (currentObject.scaleY || 1))));
+      setColor(currentObject.fill?.toString() || "");
+      setDiameter(""); // Clear diameter for rects
+    } else if (currentObject.type === "circle") {
+      const radius = (currentObject as FabricObject & ICircleOptions).radius || 0;
+      setDiameter(String(Math.round(radius * 2 * (currentObject.scaleX || 1))));
+      setWidth(""); // Clear width for circles
+      setHeight(""); // Clear height for circles
+      setColor(currentObject.fill?.toString() || "");
+    } else if (currentObject.type === "textbox" || currentObject.type === "text") {
+      // If it's a text object, update font-related properties
+      const textObject = currentObject as FabricObject & (ITextOptions | ITextboxOptions);
+      setFontFamily(textObject.fontFamily || "Arial");
+      setFontWeight(textObject.fontWeight || "normal");
+      setFontSize(textObject.fontSize || 30);
+      setColor(textObject.fill?.toString() || ""); // Text also has fill
+      setWidth(""); // Clear dimensions for text
+      setHeight("");
+      setDiameter("");
+    } else {
+      // Clear all settings if an unhandled object type is selected
+      clearSettings();
+    }
+  };
+
+  // Handles changes to the width input for rectangular objects
+  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/,/g, ""); // Remove commas
+    const intValue = parseInt(value, 10); // Parse to integer
+
+    // Only apply if selected object is a rect and value is a valid non-negative number
+    if (selectedObject && selectedObject.type === "rect" && !isNaN(intValue) && intValue >= 0) {
+      // Fabric.js objects store their original width/height, scaling is applied via scaleX/Y.
+      // To set a visual width, divide by current scaleX.
+      selectedObject.set({ width: intValue / (selectedObject.scaleX || 1) });
+      canvas?.renderAll(); // Re-render canvas
+    }
+    setWidth(value); // Update local state with string value from input
+  };
+
+  // Handles changes to the height input for rectangular objects
+  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/,/g, "");
     const intValue = parseInt(value, 10);
 
-    if (selectedObject && selectedObject.type == "rect" && intValue >= 0) {
-      selectedObject.set({ width: intValue / selectedObject.scaleX });
+    if (selectedObject && selectedObject.type === "rect" && !isNaN(intValue) && intValue >= 0) {
+      selectedObject.set({ height: intValue / (selectedObject.scaleY || 1) });
       canvas?.renderAll();
     }
-    setWidth(intValue);
-  }
+    setHeight(value);
+  };
 
-  const handleHeightChange = (e: any) => {
-    const value = e.target.value.replace(/,/g, "");
-    const intValue = parseInt(value, 10);
-
-    if (selectedObject && selectedObject.type == "rect" && intValue >= 0) {
-      selectedObject.set({ height: intValue / selectedObject.scaleY });
-      canvas?.renderAll();
-    }
-    setHeight(intValue);
-  }
-
-  const handleColorChange = (e: any) => {
+  // Handles changes to the color input
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-
-    setColor(value);
+    setColor(value); // Update local state
 
     if (selectedObject) {
-      selectedObject.set({ fill: value });
+      selectedObject.set({ fill: value }); // Set fill color for the object
       canvas?.renderAll();
     }
-  }
+  };
 
-  const handleDiameterChange = (e: any) => {
+  // Handles changes to the diameter input for circular objects
+  const handleDiameterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/,/g, "");
     const intValue = parseInt(value, 10);
 
-    setDiameter(intValue);
-
-    if (selectedObject && selectedObject.type === "circle" && intValue >= 0) {
-      selectedObject.set({ radius: intValue / 2 / selectedObject.scaleX });
+    // Only apply if selected object is a circle and value is a valid non-negative number
+    if (selectedObject && selectedObject.type === "circle" && !isNaN(intValue) && intValue >= 0) {
+      // For circles, diameter is 2 * radius. Set radius based on desired diameter and scale.
+      const circleObject = selectedObject as FabricObject & ICircleOptions;
+      circleObject.set({ radius: intValue / 2 / (circleObject.scaleX || 1) });
       canvas?.renderAll();
     }
-  }
+    setDiameter(value); // Update local state with string value from input
+  };
 
+  // Handles changes to the font family select
   const handleFontFamilyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFontFamily(value);
-    if (selectedObject && selectedObject.type === "text" || selectedObject.type === "textbox") {
-      selectedObject.set({ fontFamily: value });
+    // Apply if selected object is text or textbox
+    if (selectedObject && (selectedObject.type === "text" || selectedObject.type === "textbox")) {
+      const textObject = selectedObject as FabricObject & (ITextOptions | ITextboxOptions);
+      textObject.set({ fontFamily: value });
       canvas?.renderAll();
     }
-  }
+  };
 
+  // Handles changes to the font weight select
   const handleFontWeightChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     setFontWeight(value);
-    if (selectedObject && selectedObject.type === "text" || selectedObject.type === "textbox") {
-      selectedObject.set({ fontWeight: value });
+    if (selectedObject && (selectedObject.type === "text" || selectedObject.type === "textbox")) {
+      const textObject = selectedObject as FabricObject & (ITextOptions | ITextboxOptions);
+      textObject.set({ fontWeight: value });
       canvas?.renderAll();
     }
-  }
+  };
 
+  // Handles changes to the font size input
   const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value, 10);
-    setFontSize(value);
-    if (selectedObject && selectedObject.type === "text" || selectedObject.type === "textbox") {
-      selectedObject.set({ fontSize: value });
-      canvas?.renderAll();
+    // Only apply if value is a valid number
+    if (!isNaN(value)) {
+      setFontSize(value);
+      if (selectedObject && (selectedObject.type === "text" || selectedObject.type === "textbox")) {
+        const textObject = selectedObject as FabricObject & (ITextOptions | ITextboxOptions);
+        textObject.set({ fontSize: value });
+        canvas?.renderAll();
+      }
     }
-  }
+  };
 
+  // useEffect to manage Fabric.js canvas event listeners
   useEffect(() => {
     if (canvas) {
-      const handleSelection = (event: any) => {
-        handleObjectSelection(event.selected?.[0] || event.target);
+      // Define a handler for selection events
+      const handleSelection = (event: IEvent<FabricObject>) => {
+        // Fabric.js selection events can have `selected` (array) or `target` (single object)
+        // Prioritize `selected[0]` if multiple objects are selected, otherwise `target`
+        handleObjectSelection(event.selected?.[0] || event.target || null);
       };
 
+      // Attach event listeners
       canvas.on("selection:created", handleSelection);
       canvas.on("selection:updated", handleSelection);
       canvas.on("selection:cleared", () => {
-        setSelectedObject(null);
-        clearSettings();
+        setSelectedObject(null); // Clear selected object when selection is cleared
+        clearSettings(); // Clear all input settings
       });
+      // Listen for object modifications (e.g., resizing, moving) and scaling
       canvas.on("object:modified", handleSelection);
       canvas.on("object:scaling", handleSelection);
 
-      canvas?.renderAll()
+      canvas?.renderAll(); // Initial render to ensure canvas is up-to-date
 
-      // Cleanup function
+      // Cleanup function: remove event listeners when component unmounts or canvas changes
       return () => {
-        canvas.off("selection:created");
-        canvas.off("selection:updated");
+        canvas.off("selection:created", handleSelection);
+        canvas.off("selection:updated", handleSelection);
         canvas.off("selection:cleared");
-        canvas.off("object:modified");
-        canvas.off("object:scaling");
+        canvas.off("object:modified", handleSelection);
+        canvas.off("object:scaling", handleSelection);
       };
-
     }
-  }, [canvas]);
+  }, [canvas]); // Re-run effect only when the canvas instance changes
 
   return (
     <div>
@@ -188,6 +228,7 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
               >
                 <Trash2 size={18} />
               </button>
+              {/* Render settings based on object type */}
               {selectedObject.type === "rect" && (
                 <>
                   <div className="transition-transform duration-300 hover:scale-105">
@@ -221,7 +262,7 @@ export const Settings: React.FC<SettingsProps> = ({ canvas }) => {
                   />
                 </div>
               )}
-              {selectedObject?.type === "text" || selectedObject?.type === "textbox" && (
+              {(selectedObject.type === "text" || selectedObject.type === "textbox") && (
                 <>
                   <div className="transition-transform duration-300 hover:scale-105">
                     <label className="block mb-1 text-gray-500">Font Family:</label>
