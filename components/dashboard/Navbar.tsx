@@ -1,5 +1,4 @@
 import { UserButton } from '@clerk/nextjs';
-import { FaUndo, FaRedo } from 'react-icons/fa';
 
 const Navbar = ({ title }: { title: string | null }) => {
     return (
