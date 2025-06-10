@@ -88,6 +88,7 @@ const CroppingSettings = ({ canvas, refreshKey }: CroppingSettingsProps) => {
       width: (selectedFrame.width || 0) * (selectedFrame.scaleX || 1),
       height: (selectedFrame.height || 0) * (selectedFrame.scaleY || 1),
       format: "png",
+      multiplier: 1, // **FIXED: Added the required 'multiplier' property**
     });
 
     // Restore the selected frame's stroke width
