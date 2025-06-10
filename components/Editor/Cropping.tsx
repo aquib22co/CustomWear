@@ -12,6 +12,7 @@ const Cropping = ({ canvas, onFrameUpdate }: CroppingProps) => {
 
     // Function to add a new cropping frame (rectangle) to the canvas
     const addFrameToCanvas = () => {
+        if (!canvas) { return; }
         // Calculate a unique name for the new frame based on existing rectangles
         const frameName = `Frame ${canvas.getObjects("rect").length + 1}`;
 
