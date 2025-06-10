@@ -4,7 +4,7 @@ import { Crop } from 'lucide-react';
 
 // 1. Define the props interface for the Cropping component
 interface CroppingProps {
-  canvas: Canvas; // The Fabric.js Canvas instance
+  canvas: Canvas | null; // The Fabric.js Canvas instance or nulli
   onFrameUpdate: () => void; // A function that takes no arguments and returns nothing
 }
 
