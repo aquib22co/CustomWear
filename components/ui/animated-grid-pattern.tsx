@@ -39,7 +39,6 @@ export default function AnimatedGridPattern({
   className,
   maxOpacity = 0.5,
   duration = 4,
-  repeatDelay = 0.5, // Destructure even if not directly used in the current animation logic
   ...props
 }: AnimatedGridPatternProps) {
   const id = useId(); // Unique ID for SVG pattern
