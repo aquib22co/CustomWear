@@ -21,7 +21,6 @@ interface AnimatedGridPatternProps {
   className?: string;
   maxOpacity?: number;
   duration?: number;
-  repeatDelay?: number; // This prop is defined but not used in the original logic, will address the warning
 }
 
 // Interface for the shape of a single square in the state
