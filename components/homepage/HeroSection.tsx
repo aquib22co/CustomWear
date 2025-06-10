@@ -1,7 +1,6 @@
 import { Raleway } from "next/font/google";
 import { cn } from "@/lib/utils";
 import AnimatedGridPattern from "../ui/animated-grid-pattern";
-import { Button } from "../ui/button";
 import Link from "next/link";
 
 const raleWay = Raleway({
