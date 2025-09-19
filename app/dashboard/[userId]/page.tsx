@@ -25,23 +25,29 @@ const Dashboard = () => {
 
     // Fetch drawings function
     const fetchDrawings = async () => {
-        try {
-            const response = await fetch('/api/editor', {
-                method: 'GET',
-                credentials: 'include',
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch drawings');
-            }
-
-            const data = await response.json();
-            setDrawings(data.data); // TypeScript now knows `data.data` is of type `Drawing[]`
-        } catch (error: any) {
-            setError(error.message);
-        } finally {
-            setLoading(false);
+      try {
+        const response = await fetch('/api/editor', {
+          method: 'GET',
+          credentials: 'include',
+        });
+    
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+          throw new Error(errorData.message || 'Failed to fetch drawings');
         }
+    
+        const data: { data: Drawing[] } = await response.json(); 
+        setDrawings(data.data);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setError(error.message);
+        } else {
+          setError('An unexpected error occurred.');
+          console.error('Unexpected error type:', error);
+        }
+      } finally {
+        setLoading(false);
+      }
     };
 
     useEffect(() => {

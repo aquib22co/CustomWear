@@ -9,7 +9,6 @@ import Settings from "@/components/Editor/Settings";
 import { Square, TriangleIcon, CircleIcon, Brush, Ban, Slash, Type } from "lucide-react"
 import ClothesPanel from "@/components/Editor/ClothesPanel";
 import CanvasSettings from "@/components/Editor/CanvasSettings";
-import { handleObjectMoving, clearGuidelines } from "@/components/Editor/SnappingHelper";
 import Cropping from "@/components/Editor/Cropping";
 import { Dock, DockIcon } from "@/components/ui/dock";
 import CroppingSettings from "@/components/Editor/CroppingSettings";
@@ -21,7 +20,7 @@ const Editor = () => {
     const [isDrawing, setIsDrawing] = useState(false);
     const [brushColor, setBrushColor] = useState("#000000");
     const [brushWidth, setBrushWidth] = useState(5);
-    const [refreshKey, setResfreshKey] = useState();
+    const [refreshKey, setResfreshKey] = useState(0);
 
 
     useEffect(() => {
@@ -76,7 +75,7 @@ const Editor = () => {
     };
 
     const handleFramesUpdate = () => {
-        setResfreshKey((prevKey: any) => prevKey + 1)
+        setResfreshKey((prevKey) => prevKey + 1)
     }
     const handleClothingSelect = (imagePath: string) => {
         if (canvas) {

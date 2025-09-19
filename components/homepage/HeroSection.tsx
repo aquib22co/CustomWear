@@ -1,7 +1,6 @@
 import { Raleway } from "next/font/google";
 import { cn } from "@/lib/utils";
 import AnimatedGridPattern from "../ui/animated-grid-pattern";
-import { Button } from "../ui/button";
 import Link from "next/link";
 
 const raleWay = Raleway({
@@ -18,7 +17,6 @@ const HeroSection = () => {
                     numSquares={30}
                     maxOpacity={0.1}
                     duration={3}
-                    repeatDelay={1}
                     className={cn(
                         "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)]",
                         "skew-y-12",
